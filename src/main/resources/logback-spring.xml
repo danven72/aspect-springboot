@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+	
+	<property name="spring.application.name" value="demo-aspect" />
+	
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+	<appender name="devFileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${user.dir}/logs/${spring.application.name}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${user.dir}\logs\${spring.application.name}.%d{yyyy-MM-dd}.%i.log
+			</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy	class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %5p [${spring.application.name}, %X{X-B3-TraceId:-}]  %c - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+	<appender name="execTimeFileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${user.dir}/logs/${spring.application.name}-chrono.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${user.dir}\logs\${spring.application.name}-chrono.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy	class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>5MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+		<encoder>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg%n</Pattern>
+			<!-- 
+			<Pattern>
+			[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %5p [${spring.application.name}, %X{X-B3-TraceId:-}]  %c - %msg%n
+			</Pattern>
+			-->
+		</encoder>
+	</appender>
+
+	<logger name="exec.time.logger" level="INFO">
+		<appender-ref ref="execTimeFileAppender" />
+	</logger>
+
+	<logger name="aspect-demo.logger.controller" level="DEBUG"
+		additivity="false">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="devFileAppender" />
+	</logger>
+	<logger name="aspect-demo.logger.service" level="DEBUG"
+		additivity="false">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="devFileAppender" />
+	</logger>
+
+
+    <!-- 
+	<springProfile name="prod">
+		<appender name="stash"
+			class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+			<destination>localhost:4567</destination>
+			<encoder class="net.logstash.logback.encoder.LogstashEncoder"></encoder>
+		</appender>
+		
+	</springProfile>
+    -->
+    <!-- 
+	<springProfile name="dev">		
+		<logger name="aspect-demo.logger.controller" level="DEBUG"
+			additivity="false">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="devFileAppender" />
+		</logger>
+		<logger name="aspect-demo.logger.service" level="DEBUG"
+			additivity="false">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="devFileAppender" />
+		</logger>
+		
+	</springProfile>
+	-->
+</configuration>

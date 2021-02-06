@@ -1,0 +1,14 @@
+spring: 
+  application:
+    name: demo-aspect
+  output:    ansi:      enabled: DETECT
+server:  port: 8085
+
+
+logging:  level:
+    root: INFO    aspect-demo.logger.controller: INFO
+    aspect-demo.logger.service: INFO
+    exec.time.logger: INFO  
+
+
+  
